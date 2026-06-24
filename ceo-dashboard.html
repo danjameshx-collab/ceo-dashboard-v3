@@ -1002,13 +1002,7 @@
                     <div class="inp-row-lbl">Opening Cash Balance</div>
                     <input type="text" inputmode="decimal" class="inp" id="di-openingCash" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00">
                 </div>
-                <div style="padding:8px 20px 14px;font-size:13px;color:var(--text3);display:flex;align-items:center;justify-content:space-between;gap:12px">
-                    <span id="di-opening-note"></span>
-                    <label id="di-opening-override-wrap" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;white-space:nowrap">
-                        <input type="checkbox" id="di-opening-override" onchange="diToggleOpeningOverride(this.checked)">
-                        Enter manually
-                    </label>
-                </div>
+                <div style="padding:8px 20px 14px;font-size:13px;color:var(--text3)" id="di-opening-note"></div>
             </div>
 
             <!-- Cash Inflows -->
@@ -1916,8 +1910,6 @@ function renderDataInput() {
 function diLoadMonth(id) {
     const m  = months.find(mo => mo.id === id);
     const cm = cashMonths.find(mo => mo.id === id) || {};
-    const ms = sorted();
-    const idx = ms.findIndex(mo => mo.id === id);
 
     /* Business fields */
     ['rev','cogs','cac','sm','ga','rd','interest','tax','cs','nc','ch'].forEach(f => {
@@ -1925,36 +1917,13 @@ function diLoadMonth(id) {
         if (el) { el.value = m && m[f] ? m[f] : ''; fmtInput(el); }
     });
 
-    /* Opening cash */
-    const openEl     = document.getElementById('di-openingCash');
-    const noteEl     = document.getElementById('di-opening-note');
-    const overrideEl = document.getElementById('di-opening-override');
-    const overrideWrap = document.getElementById('di-opening-override-wrap');
-    const calcs   = cdCalcAll();
-    if (idx === 0 || !cashMonths.find(mo => mo.id === id)) {
-        openEl.disabled     = false;
-        openEl.value        = cm.openingCash || '';
-        fmtInput(openEl);
-        noteEl.textContent  = 'First month — enter your starting cash balance.';
-        overrideWrap.style.display = 'none';
-        overrideEl.checked = false;
-    } else {
-        const prevIdx = cashMonths.findIndex(mo => mo.id === id);
-        const prevC   = prevIdx > 0 ? calcs[prevIdx - 1] : null;
-        overrideWrap.style.display = prevC ? 'flex' : 'none';
-        if (prevC && !cm.manualOpening) {
-            openEl.disabled    = true;
-            openEl.value       = prevC.closing.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-            noteEl.textContent = 'Auto-set from prior month closing (' + cdFmtFull(prevC.closing) + ').';
-            overrideEl.checked = false;
-        } else {
-            openEl.disabled    = false;
-            openEl.value       = cm.openingCash || '';
-            fmtInput(openEl);
-            noteEl.textContent = prevC ? 'Manual override — not chained from prior month.' : 'Enter your starting cash balance.';
-            overrideEl.checked = !!prevC;
-        }
-    }
+    /* Opening cash — always manual entry */
+    const openEl = document.getElementById('di-openingCash');
+    const noteEl = document.getElementById('di-opening-note');
+    openEl.disabled    = false;
+    openEl.value       = cm.openingCash || '';
+    fmtInput(openEl);
+    noteEl.textContent = 'Enter your starting cash balance for this month.';
 
     /* Cash fields */
     [...CD_INFLOW_FIELDS, ...CD_OUTFLOW_FIELDS,
@@ -2001,25 +1970,6 @@ function diUpdateTotals() {
     }
 }
 
-function diToggleOpeningOverride(checked) {
-    const id = document.getElementById('di-month-sel')?.value;
-    if (!id) return;
-    let cm = cashMonths.find(mo => mo.id === id);
-    if (!cm) {
-        cm = { id, openingCash:0, customerPayments:0, retainers:0, subscriptionRevenue:0,
-               loanProceeds:0, otherIncome:0, payroll:0, contractors:0,
-               marketing:0, software:0, rent:0, inventory:0, taxes:0, debtRepayment:0,
-               ownerDraws:0, miscExpenses:0,
-               startingMRR:0, newMRR:0, expansionMRR:0, contractionMRR:0, churnedMRR:0 };
-        cashMonths.push(cm);
-        cashMonths.sort((a,b) => a.id < b.id ? -1 : 1);
-    }
-    cm.manualOpening = checked;
-    if (!checked) cm.openingCash = 0;
-    diLoadMonth(id);
-    cashSave();
-}
-
 function diAutoSave() {
     diUpdateTotals();
     clearTimeout(diSaveTimer);
@@ -2049,8 +1999,7 @@ function diCommit() {
         cashMonths.push(cm);
         cashMonths.sort((a,b) => a.id < b.id ? -1 : 1);
     }
-    const openEl = document.getElementById('di-openingCash');
-    if (openEl && !openEl.disabled) cm.openingCash = parseFloat(openEl.value) || 0;
+    cm.openingCash = g('openingCash');
     [...CD_INFLOW_FIELDS, ...CD_OUTFLOW_FIELDS,
      'startingMRR','newMRR','expansionMRR','contractionMRR','churnedMRR'].forEach(k => {
         cm[k] = g(k);
@@ -2103,20 +2052,12 @@ function openModal() {
         const next = ly + '-' + String(lm).padStart(2,'0');
         if (sel.querySelector(`option[value="${next}"]`)) sel.value = next;
     }
-    /* Opening cash */
+    /* Opening cash — always manual entry */
     const openEl  = document.getElementById('m-opening');
     const noteEl  = document.getElementById('m-opening-note');
-    if (cashMonths.length) {
-        const calcs    = cdCalcAll();
-        const lastClose = calcs[calcs.length - 1].closing;
-        openEl.value     = lastClose.toFixed(2);
-        openEl.disabled  = true;
-        noteEl.textContent = 'Auto-set from ' + cdLabel(cashMonths[cashMonths.length-1].id) + ' closing (' + cdFmtFull(lastClose) + ').';
-    } else {
-        openEl.disabled   = false;
-        openEl.value      = '';
-        noteEl.textContent = 'Enter your current cash balance to start tracking.';
-    }
+    openEl.disabled    = false;
+    openEl.value        = '';
+    noteEl.textContent = 'Enter your current cash balance for this month.';
     document.getElementById('modal').classList.add('open');
 }
 
@@ -2134,9 +2075,7 @@ function saveMonth() {
     months.sort((a,b) => a.id < b.id ? -1 : 1);
 
     /* Create cash month */
-    const opening = cashMonths.length
-        ? cdCalcAll()[cashMonths.length - 1].closing
-        : parseNum(document.getElementById('m-opening').value);
+    const opening = parseNum(document.getElementById('m-opening').value);
     if (!cashMonths.find(m => m.id === pid)) {
         cashMonths.push({ id:pid, openingCash:opening,
             customerPayments:0, retainers:0, subscriptionRevenue:0, loanProceeds:0, otherIncome:0,
@@ -2748,9 +2687,9 @@ const CD_MONTHS_NAMES   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'
 
 function cdN(m, k) { return parseFloat(m[k]) || 0; }
 
-function cdCalcMonth(m, prevClosing) {
-    /* Opening: auto-chain from previous closing, unless manually overridden (or first month) */
-    const opening  = (prevClosing !== null && !m.manualOpening) ? prevClosing : cdN(m, 'openingCash');
+function cdCalcMonth(m) {
+    /* Opening cash is always a manual input, never auto-chained */
+    const opening  = cdN(m, 'openingCash');
     const totalIn  = CD_INFLOW_FIELDS.reduce((s, k) => s + cdN(m, k), 0);
     const totalOut = CD_OUTFLOW_FIELDS.reduce((s, k) => s + cdN(m, k), 0);
     const net      = totalIn - totalOut;
@@ -2785,11 +2724,8 @@ function cdCalcMonth(m, prevClosing) {
 
 function cdCalcAll() {
     const results = [];
-    let prevClosing = null;
     cashMonths.forEach(m => {
-        const c = cdCalcMonth(m, prevClosing);
-        prevClosing = c.closing;
-        results.push(c);
+        results.push(cdCalcMonth(m));
     });
     return results;
 }
@@ -2915,11 +2851,11 @@ function cashRenderOverview() {
             <div class="kpi-fml">Total Cash In − Total Cash Out</div>
             ${dBadge(c, prev, 'net')}
         </div>
-        <div class="kpi" title="Opening Cash = prior month's closing (auto-chained), unless manually overridden">
+        <div class="kpi" title="Opening Cash — entered manually for this month">
             <div class="kpi-lbl">Opening Cash</div>
             <div class="kpi-val">${cdFmt(c.opening)}</div>
-            <div class="kpi-work">${cashMonths[idx].manualOpening ? 'Manual override: ' + cdFmtFull(c.opening) : (prev ? '= ' + cdLabel(cashMonths[idx-1].id) + ' closing: ' + cdFmtFull(c.opening) : 'Manual entry — first month')}</div>
-            <div class="kpi-fml">Prior month Closing Cash</div>
+            <div class="kpi-work">Manual entry: ${cdFmtFull(c.opening)}</div>
+            <div class="kpi-fml">Manual input</div>
         </div>
         <div class="kpi" title="Closing Cash = Opening + Net Cash Flow">
             <div class="kpi-lbl">Closing Cash</div>
