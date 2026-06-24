@@ -1002,7 +1002,13 @@
                     <div class="inp-row-lbl">Opening Cash Balance</div>
                     <input type="text" inputmode="decimal" class="inp" id="di-openingCash" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00">
                 </div>
-                <div style="padding:8px 20px 14px;font-size:13px;color:var(--text3)" id="di-opening-note"></div>
+                <div style="padding:8px 20px 14px;font-size:13px;color:var(--text3);display:flex;align-items:center;justify-content:space-between;gap:12px">
+                    <span id="di-opening-note"></span>
+                    <label id="di-opening-override-wrap" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;white-space:nowrap">
+                        <input type="checkbox" id="di-opening-override" onchange="diToggleOpeningOverride(this.checked)">
+                        Enter manually
+                    </label>
+                </div>
             </div>
 
             <!-- Cash Inflows -->
@@ -1920,26 +1926,33 @@ function diLoadMonth(id) {
     });
 
     /* Opening cash */
-    const openEl  = document.getElementById('di-openingCash');
-    const noteEl  = document.getElementById('di-opening-note');
+    const openEl     = document.getElementById('di-openingCash');
+    const noteEl     = document.getElementById('di-opening-note');
+    const overrideEl = document.getElementById('di-opening-override');
+    const overrideWrap = document.getElementById('di-opening-override-wrap');
     const calcs   = cdCalcAll();
     if (idx === 0 || !cashMonths.find(mo => mo.id === id)) {
-        openEl.disabled    = false;
-        openEl.value       = cm.openingCash || '';
+        openEl.disabled     = false;
+        openEl.value        = cm.openingCash || '';
         fmtInput(openEl);
-        noteEl.textContent = 'First month — enter your starting cash balance.';
+        noteEl.textContent  = 'First month — enter your starting cash balance.';
+        overrideWrap.style.display = 'none';
+        overrideEl.checked = false;
     } else {
         const prevIdx = cashMonths.findIndex(mo => mo.id === id);
         const prevC   = prevIdx > 0 ? calcs[prevIdx - 1] : null;
-        if (prevC) {
+        overrideWrap.style.display = prevC ? 'flex' : 'none';
+        if (prevC && !cm.manualOpening) {
             openEl.disabled    = true;
             openEl.value       = prevC.closing.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
             noteEl.textContent = 'Auto-set from prior month closing (' + cdFmtFull(prevC.closing) + ').';
+            overrideEl.checked = false;
         } else {
             openEl.disabled    = false;
             openEl.value       = cm.openingCash || '';
             fmtInput(openEl);
-            noteEl.textContent = 'Enter your starting cash balance.';
+            noteEl.textContent = prevC ? 'Manual override — not chained from prior month.' : 'Enter your starting cash balance.';
+            overrideEl.checked = !!prevC;
         }
     }
 
@@ -1986,6 +1999,25 @@ function diUpdateTotals() {
             el('di-calc-runway').textContent = cdFmtRw(calcs[cidx].grossBurnRunway);
         }
     }
+}
+
+function diToggleOpeningOverride(checked) {
+    const id = document.getElementById('di-month-sel')?.value;
+    if (!id) return;
+    let cm = cashMonths.find(mo => mo.id === id);
+    if (!cm) {
+        cm = { id, openingCash:0, customerPayments:0, retainers:0, subscriptionRevenue:0,
+               loanProceeds:0, otherIncome:0, payroll:0, contractors:0,
+               marketing:0, software:0, rent:0, inventory:0, taxes:0, debtRepayment:0,
+               ownerDraws:0, miscExpenses:0,
+               startingMRR:0, newMRR:0, expansionMRR:0, contractionMRR:0, churnedMRR:0 };
+        cashMonths.push(cm);
+        cashMonths.sort((a,b) => a.id < b.id ? -1 : 1);
+    }
+    cm.manualOpening = checked;
+    if (!checked) cm.openingCash = 0;
+    diLoadMonth(id);
+    cashSave();
 }
 
 function diAutoSave() {
@@ -2717,8 +2749,8 @@ const CD_MONTHS_NAMES   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'
 function cdN(m, k) { return parseFloat(m[k]) || 0; }
 
 function cdCalcMonth(m, prevClosing) {
-    /* Opening: auto-chain from previous closing, or manual for first month */
-    const opening  = prevClosing !== null ? prevClosing : cdN(m, 'openingCash');
+    /* Opening: auto-chain from previous closing, unless manually overridden (or first month) */
+    const opening  = (prevClosing !== null && !m.manualOpening) ? prevClosing : cdN(m, 'openingCash');
     const totalIn  = CD_INFLOW_FIELDS.reduce((s, k) => s + cdN(m, k), 0);
     const totalOut = CD_OUTFLOW_FIELDS.reduce((s, k) => s + cdN(m, k), 0);
     const net      = totalIn - totalOut;
@@ -2883,10 +2915,10 @@ function cashRenderOverview() {
             <div class="kpi-fml">Total Cash In − Total Cash Out</div>
             ${dBadge(c, prev, 'net')}
         </div>
-        <div class="kpi" title="Opening Cash = prior month's closing (auto-chained)">
+        <div class="kpi" title="Opening Cash = prior month's closing (auto-chained), unless manually overridden">
             <div class="kpi-lbl">Opening Cash</div>
             <div class="kpi-val">${cdFmt(c.opening)}</div>
-            <div class="kpi-work">${prev ? '= ' + cdLabel(cashMonths[idx-1].id) + ' closing: ' + cdFmtFull(c.opening) : 'Manual entry — first month'}</div>
+            <div class="kpi-work">${cashMonths[idx].manualOpening ? 'Manual override: ' + cdFmtFull(c.opening) : (prev ? '= ' + cdLabel(cashMonths[idx-1].id) + ' closing: ' + cdFmtFull(c.opening) : 'Manual entry — first month')}</div>
             <div class="kpi-fml">Prior month Closing Cash</div>
         </div>
         <div class="kpi" title="Closing Cash = Opening + Net Cash Flow">
