@@ -2174,7 +2174,9 @@ function calcForecast(c) {
         : customerSat < 95 ? 'growing' : customerSat <= 105 ? 'stable' : 'shrinking';
 
     // Revenue Ceiling = (New Clients × Rev/Client) / Logo Churn Rate
-    const newRevAdded = c.nc * c.rpc;
+    // Uses arpu (Revenue ÷ Starting Clients) rather than rpc (Revenue ÷ (Starting + New)),
+    // since rpc dilutes the price by counting brand-new clients who haven't generated revenue yet.
+    const newRevAdded = c.nc * c.arpu;
     const revCeiling = (lchurnRate > 0 && newRevAdded > 0) ? newRevAdded / lchurnRate : null;
     const revGap = revCeiling !== null ? revCeiling - c.rev : null;
     const revSat = (revCeiling !== null && revCeiling > 0)
@@ -2301,7 +2303,7 @@ function renderForecastSingle(c, f) {
     set('fc-cd-lost',   lostPerMo.toFixed(1));
     set('kw-fc-cd-lost', f.currentClients + ' × ' + fPct(c.lchurn));
     set('fc-cd-newrev', fC(f.newRevAdded));
-    set('kw-fc-cd-newrev', c.nc + ' × ' + f$(c.rpc));
+    set('kw-fc-cd-newrev', c.nc + ' × ' + f$(c.arpu));
 
     // ── Direction Card ──
     const dirCard = document.getElementById('fc-direction');
