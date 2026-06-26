@@ -748,7 +748,7 @@
                 <div class="sec-hdr"><span class="sec-title">Cash Position</span></div>
                 <div class="kpi-grid g5" id="cd-row1"></div>
                 <div class="sec-hdr" style="margin-top:4px"><span class="sec-title">Performance</span></div>
-                <div class="kpi-grid g3" id="cd-row2"></div>
+                <div class="kpi-grid g4" id="cd-row2"></div>
                 <div class="sec-hdr" style="margin-top:8px"><span class="sec-title">Rolling Averages</span></div>
                 <div class="kpi-grid g3" id="cd-rolling-grid"></div>
             </div>
@@ -1012,9 +1012,8 @@
                     <div class="inp-section-title">Cash Inflows</div>
                 </div>
                 <div class="di-2col">
-                    <div class="inp-row"><div class="inp-row-lbl">Customer Payments</div><input type="text" inputmode="decimal" class="inp" id="di-customerPayments" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00"></div>
-                    <div class="inp-row"><div class="inp-row-lbl">Retainers</div><input type="text" inputmode="decimal" class="inp" id="di-retainers" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00"></div>
-                    <div class="inp-row"><div class="inp-row-lbl">Subscription Revenue</div><input type="text" inputmode="decimal" class="inp" id="di-subscriptionRevenue" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00"></div>
+                    <div class="inp-row"><div class="inp-row-lbl">Customer Payments — Recurring</div><input type="text" inputmode="decimal" class="inp" id="di-customerPaymentsRecurring" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00"></div>
+                    <div class="inp-row"><div class="inp-row-lbl">Customer Payments — One-off</div><input type="text" inputmode="decimal" class="inp" id="di-customerPaymentsOneOff" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00"></div>
                     <div class="inp-row"><div class="inp-row-lbl">Loan Proceeds</div><input type="text" inputmode="decimal" class="inp" id="di-loanProceeds" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00"></div>
                     <div class="inp-row"><div class="inp-row-lbl">Other Income</div><input type="text" inputmode="decimal" class="inp" id="di-otherIncome" onfocus="stripInput(this)" onblur="fmtInput(this)" oninput="diAutoSave()" placeholder="0.00"></div>
                 </div>
@@ -1079,6 +1078,7 @@
                     <div class="di-calc-row"><span class="di-calc-lbl">Logo Churn Rate</span><span class="inp-row-calc" id="di-calc-lchurn">—</span></div>
                     <div class="di-calc-row"><span class="di-calc-lbl">LTGP:CAC</span><span class="inp-row-calc" id="di-calc-ratio">—</span></div>
                     <div class="di-calc-row"><span class="di-calc-lbl">Gross Burn Runway</span><span class="inp-row-calc" id="di-calc-runway">—</span></div>
+                    <div class="di-calc-row"><span class="di-calc-lbl">Default Rate</span><span class="inp-row-calc" id="di-calc-defaultrate">—</span></div>
                 </div>
             </div>
         </div>
@@ -1967,6 +1967,9 @@ function diUpdateTotals() {
         if (cidx >= 0 && el('di-calc-runway')) {
             el('di-calc-runway').textContent = cdFmtRw(calcs[cidx].grossBurnRunway);
         }
+        if (cidx >= 0 && el('di-calc-defaultrate')) {
+            el('di-calc-defaultrate').textContent = cdFmtRw(calcs[cidx].defaultRate);
+        }
     }
 }
 
@@ -1991,7 +1994,7 @@ function diCommit() {
     /* Cash data → cashMonths[] + localStorage */
     let cm = cashMonths.find(mo => mo.id === id);
     if (!cm) {
-        cm = { id, openingCash:0, customerPayments:0, retainers:0, subscriptionRevenue:0,
+        cm = { id, openingCash:0, customerPaymentsRecurring:0, customerPaymentsOneOff:0,
                loanProceeds:0, otherIncome:0, payroll:0, contractors:0,
                marketing:0, software:0, rent:0, inventory:0, taxes:0, debtRepayment:0,
                ownerDraws:0, miscExpenses:0,
@@ -2078,7 +2081,7 @@ function saveMonth() {
     const opening = parseNum(document.getElementById('m-opening').value);
     if (!cashMonths.find(m => m.id === pid)) {
         cashMonths.push({ id:pid, openingCash:opening,
-            customerPayments:0, retainers:0, subscriptionRevenue:0, loanProceeds:0, otherIncome:0,
+            customerPaymentsRecurring:0, customerPaymentsOneOff:0, loanProceeds:0, otherIncome:0,
             payroll:0, contractors:0, marketing:0, software:0, rent:0, inventory:0,
             taxes:0, debtRepayment:0, ownerDraws:0, miscExpenses:0,
             startingMRR:0, newMRR:0, expansionMRR:0, contractionMRR:0, churnedMRR:0 });
@@ -2174,7 +2177,9 @@ function calcForecast(c) {
         : customerSat < 95 ? 'growing' : customerSat <= 105 ? 'stable' : 'shrinking';
 
     // Revenue Ceiling = (New Clients × Rev/Client) / Logo Churn Rate
-    const newRevAdded = c.nc * c.rpc;
+    // Uses arpu (Revenue ÷ Starting Clients) rather than rpc (Revenue ÷ (Starting + New)),
+    // since rpc dilutes the price by counting brand-new clients who haven't generated revenue yet.
+    const newRevAdded = c.nc * c.arpu;
     const revCeiling = (lchurnRate > 0 && newRevAdded > 0) ? newRevAdded / lchurnRate : null;
     const revGap = revCeiling !== null ? revCeiling - c.rev : null;
     const revSat = (revCeiling !== null && revCeiling > 0)
@@ -2301,7 +2306,7 @@ function renderForecastSingle(c, f) {
     set('fc-cd-lost',   lostPerMo.toFixed(1));
     set('kw-fc-cd-lost', f.currentClients + ' × ' + fPct(c.lchurn));
     set('fc-cd-newrev', fC(f.newRevAdded));
-    set('kw-fc-cd-newrev', c.nc + ' × ' + f$(c.rpc));
+    set('kw-fc-cd-newrev', c.nc + ' × ' + f$(c.arpu));
 
     // ── Direction Card ──
     const dirCard = document.getElementById('fc-direction');
@@ -2673,6 +2678,22 @@ let cashMonths = [];
 // ── Load / Save ──
 function cashLoad() {
     try { cashMonths = JSON.parse(localStorage.getItem(CD_LS_KEY)) || []; } catch(e) { cashMonths = []; }
+    /* Migrate legacy single "customerPayments" field → split recurring/one-off (default: treat as recurring) */
+    cashMonths.forEach(m => {
+        if (m.customerPayments !== undefined) {
+            m.customerPaymentsRecurring = m.customerPayments;
+            m.customerPaymentsOneOff = m.customerPaymentsOneOff || 0;
+            delete m.customerPayments;
+        }
+    });
+    /* Migrate removed "retainers" / "subscriptionRevenue" fields into Customer Payments (Recurring), same income type */
+    cashMonths.forEach(m => {
+        if (m.retainers !== undefined || m.subscriptionRevenue !== undefined) {
+            m.customerPaymentsRecurring = (m.customerPaymentsRecurring || 0) + (m.retainers || 0) + (m.subscriptionRevenue || 0);
+            delete m.retainers;
+            delete m.subscriptionRevenue;
+        }
+    });
     cashMonths.sort((a, b) => a.id < b.id ? -1 : 1);
 }
 function cashSave() {
@@ -2681,7 +2702,7 @@ function cashSave() {
 cashLoad();
 
 // ── Calculations ──
-const CD_INFLOW_FIELDS  = ['customerPayments','retainers','subscriptionRevenue','loanProceeds','otherIncome'];
+const CD_INFLOW_FIELDS  = ['customerPaymentsRecurring','customerPaymentsOneOff','loanProceeds','otherIncome'];
 const CD_OUTFLOW_FIELDS = ['payroll','contractors','marketing','software','rent','inventory','taxes','debtRepayment','ownerDraws','miscExpenses'];
 const CD_MONTHS_NAMES   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -2697,12 +2718,19 @@ function cdCalcMonth(m) {
     const burn     = totalOut;   // Gross burn = Total Cash Out (always; never net-adjusted)
     // Gross Burn Runway = Opening Cash ÷ Gross Burn. Worst-case survival if all income stopped.
     const grossBurnRunway = burn > 0 ? opening / burn : null;
-    // Net Burn = Operating Cash In (Customer Payments + Retainers + Subscription Revenue) − Gross Burn.
+    // Net Burn = Operating Cash In (Customer Payments [recurring + one-off]) − Gross Burn.
     // Excludes Loan Proceeds & Other Income (financing/non-operating).
-    const cashInOperating = cdN(m, 'customerPayments') + cdN(m, 'retainers') + cdN(m, 'subscriptionRevenue');
+    const cashInOperating = cdN(m, 'customerPaymentsRecurring') + cdN(m, 'customerPaymentsOneOff');
     const netBurn = cashInOperating - burn;
     // Net Burn Runway = Opening Cash ÷ |Net Burn|, only when actually burning (netBurn < 0).
     const netBurnRunway = netBurn < 0 ? opening / Math.abs(netBurn) : null;
+    // Reliable Cash Inflows = recurring/committed income only (Customer Payments — Recurring).
+    // Excludes one-off Customer Payments, Loan Proceeds, Other Income — same exclusions as pipeline/forecast/fundraising.
+    const reliableCashIn = cdN(m, 'customerPaymentsRecurring');
+    // Default Burn = Cash Outflows − Reliable Cash Inflows.
+    const defaultBurn = burn - reliableCashIn;
+    // Default Rate = Opening Cash ÷ Default Burn. Survival if nothing new goes right but reliable income continues.
+    const defaultRate = defaultBurn > 0 ? opening / defaultBurn : null;
     // Cash Growth Rate = Net Cash Flow ÷ Opening Cash × 100
     const cashGrowthRate = opening > 0 ? (net / opening) * 100 : null;
     /* MRR / Retention */
@@ -2719,6 +2747,7 @@ function cdCalcMonth(m) {
     const netMRRGrowth = endMRR - startMRR;
     const mrrGrowthPct = startMRR > 0 ? netMRRGrowth / startMRR : null;
     return { opening, totalIn, totalOut, net, closing, burn, grossBurnRunway, cashInOperating, netBurn, netBurnRunway, cashGrowthRate,
+             reliableCashIn, defaultBurn, defaultRate,
              startMRR, newMRR, expMRR, conMRR, churnMRR, endMRR, nrr, gr, churnRate, expRate, netMRRGrowth, mrrGrowthPct };
 }
 
@@ -2817,9 +2846,8 @@ function cashRenderOverview() {
 
     /* Build inflow / outflow breakdown strings for workings */
     const inflowLines = [
-        ['Customer Payments', m.customerPayments], ['Retainers', m.retainers],
-        ['Subscription Rev', m.subscriptionRevenue], ['Loan Proceeds', m.loanProceeds],
-        ['Other Income', m.otherIncome]
+        ['Customer Payments (Recurring)', m.customerPaymentsRecurring], ['Customer Payments (One-off)', m.customerPaymentsOneOff],
+        ['Loan Proceeds', m.loanProceeds], ['Other Income', m.otherIncome]
     ].filter(([, v]) => v > 0).map(([l, v]) => l + ': ' + cdFmtFull(v)).join(' · ') || 'No inflows entered';
 
     const outflowLines = [
@@ -2875,6 +2903,11 @@ function cashRenderOverview() {
         ? (c.netBurn >= 0 ? 'Cash generating — no net burn' : 'No opening cash to deplete')
         : cdFmtFull(c.opening) + ' ÷ ' + cdFmt(Math.abs(c.netBurn)) + ' net burn = ' + cdFmtRw(c.netBurnRunway);
 
+    const drCls = c.defaultRate === null ? 'g' : c.defaultRate >= 12 ? 'g' : c.defaultRate >= 3 ? 'a' : 'r';
+    const drWork = c.defaultRate === null
+        ? 'Reliable income alone covers cash outflows — no default burn'
+        : cdFmtFull(c.opening) + ' ÷ ' + cdFmt(c.defaultBurn) + ' default burn = ' + cdFmtRw(c.defaultRate);
+
     const cgrTxt = c.cashGrowthRate !== null ? (c.cashGrowthRate >= 0 ? '+' : '') + c.cashGrowthRate.toFixed(1) + '%' : '—';
     const cgrCls = c.cashGrowthRate === null ? '' : c.cashGrowthRate >= 0 ? 'g' : 'r';
 
@@ -2890,6 +2923,12 @@ function cashRenderOverview() {
             <div class="kpi-val ${nbrCls}">${cdFmtRw(c.netBurnRunway)}</div>
             <div class="kpi-work">${nbrWork}</div>
             <div class="kpi-fml">Opening Cash ÷ |Operating Cash In − Gross Burn|</div>
+        </div>
+        <div class="kpi" title="Default Rate = Opening Cash ÷ Default Burn. Survival if nothing new goes right but reliable income (recurring Customer Payments) continues. Excludes one-off payments, pipeline, fundraising.">
+            <div class="kpi-lbl">Default Rate</div>
+            <div class="kpi-val ${drCls}">${cdFmtRw(c.defaultRate)}</div>
+            <div class="kpi-work">${drWork}</div>
+            <div class="kpi-fml">Opening Cash ÷ (Cash Outflows − Reliable Cash Inflows)</div>
         </div>
         <div class="kpi" title="Cash Growth Rate = Net Cash Flow ÷ Opening Cash × 100">
             <div class="kpi-lbl">Cash Growth Rate</div>
