@@ -141,6 +141,7 @@
         .g2{grid-template-columns:repeat(2,1fr)}
         .g4{grid-template-columns:repeat(4,1fr)}
         .g5{grid-template-columns:repeat(5,1fr)}
+        .g6{grid-template-columns:repeat(6,1fr)}
         .g3{grid-template-columns:repeat(3,1fr)}
 
         .kpi{
@@ -272,6 +273,28 @@
         }
         .kw-tog-all:hover{background:rgba(255,255,255,.12);color:var(--text);}
 
+        /* ── Detailed workings panel (shown inside kpi-work when toggled open) ── */
+        .kw-panel{margin-top:8px}
+        .kw-ptitle{font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--text);text-transform:uppercase;margin-bottom:8px}
+        .kw-pdesc{font-size:13px;color:var(--text3);line-height:1.55;margin-bottom:12px}
+        .kw-pdiv{height:1px;background:var(--border);margin:12px 0}
+        .kw-pline{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;padding:4px 0}
+        .kw-pline span:first-child{color:var(--text3)}
+        .kw-pline span:last-child{font-weight:600;color:var(--text)}
+        .kw-pline span.kw-neg{color:var(--red) !important}
+        .kw-pformula-lbl{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .kw-pformula{font-size:13px;color:var(--text3);line-height:1.6}
+        .kw-presult{border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;margin-top:4px}
+        .kw-presult.r{border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.05)}
+        .kw-presult.g{border-color:rgba(76,217,123,.35);background:rgba(76,217,123,.05)}
+        .kw-presult.a{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+        .kw-presult-lbl{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;color:var(--text3)}
+        .kw-presult.r .kw-presult-lbl,.kw-presult.r .kw-presult-val{color:var(--red)}
+        .kw-presult.g .kw-presult-lbl,.kw-presult.g .kw-presult-val{color:var(--g1)}
+        .kw-presult.a .kw-presult-lbl,.kw-presult.a .kw-presult-val{color:var(--amber)}
+        .kw-presult-val{font-size:24px;font-weight:700;color:var(--text)}
+        .kw-presult-sub{font-size:13px;color:var(--text3);margin-top:4px}
+
         /* ── Business Overview ── */
         .bo-section{margin-bottom:40px}
         .bo-heading{font-size:27px;font-weight:700;color:var(--text);margin-bottom:14px;letter-spacing:-.02em;line-height:1.2}
@@ -280,7 +303,7 @@
         [title]{cursor:help}
 
         /* ── Responsive ── */
-        @media(max-width:1280px){.g5{grid-template-columns:repeat(3,1fr)}}
+        @media(max-width:1280px){.g5,.g6{grid-template-columns:repeat(3,1fr)}}
         @media(max-width:1000px){.g4,.g3{grid-template-columns:repeat(2,1fr)}.cr2,.cr31{grid-template-columns:1fr}}
         @media(max-width:700px){.sidebar{display:none}.main{margin-left:0}}
 
@@ -624,13 +647,11 @@
                     <div class="kpi-lbl" id="lbl-rev">Total Monthly Revenue</div>
                     <div class="kpi-val g" id="k-rev">—</div>
                     <div class="kpi-work" id="kw-rev">Direct input</div>
-                    <div class="kpi-fml">R</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl" id="lbl-ratio">LTGP : CAC</div>
                     <div class="ratio-val" id="k-ratio">—</div>
                     <div class="kpi-work" id="kw-ratio">—</div>
-                    <div class="kpi-fml">LTGP ÷ CAC</div>
                 </div>
             </div>
 
@@ -641,25 +662,21 @@
                     <div class="kpi-lbl">Gross Margin</div>
                     <div class="kpi-val" id="k-gm">—</div>
                     <div class="kpi-work" id="kw-gm">—</div>
-                    <div class="kpi-fml">(Revenue − COGS) ÷ Revenue × 100</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">Net Margin</div>
                     <div class="kpi-val" id="k-nm">—</div>
                     <div class="kpi-work" id="kw-nm">—</div>
-                    <div class="kpi-fml">Net Profit ÷ Revenue × 100</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">Total Cost</div>
                     <div class="kpi-val" id="k-tc">—</div>
                     <div class="kpi-work" id="kw-tc">—</div>
-                    <div class="kpi-fml">COGS + CAC Spend + S&amp;M + G&amp;A + R&amp;D + Interest + Tax</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">COGS</div>
                     <div class="kpi-val" id="k-cogs">—</div>
                     <div class="kpi-work" id="kw-cogs">—</div>
-                    <div class="kpi-fml">C (direct input)</div>
                 </div>
             </div>
 
@@ -670,25 +687,21 @@
                     <div class="kpi-lbl">LTGP</div>
                     <div class="kpi-val g" id="k-ltgp">—</div>
                     <div class="kpi-work" id="kw-ltgp">—</div>
-                    <div class="kpi-fml">(GP ÷ Starting Clients) × (1 ÷ Logo Churn) = GP ÷ Monthly Churn Count</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">CAC</div>
                     <div class="kpi-val" id="k-cac">—</div>
                     <div class="kpi-work" id="kw-cac">Direct input</div>
-                    <div class="kpi-fml">Cost per client acquired</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">Total CAC</div>
                     <div class="kpi-val" id="k-total-cac">—</div>
                     <div class="kpi-work" id="kw-total-cac">—</div>
-                    <div class="kpi-fml">CAC × New Clients</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">Customer Lifespan</div>
                     <div class="kpi-val" id="k-life">—</div>
                     <div class="kpi-work" id="kw-life">—</div>
-                    <div class="kpi-fml">1 ÷ Logo Churn Rate</div>
                 </div>
             </div>
 
@@ -699,19 +712,16 @@
                     <div class="kpi-lbl">Retention Rate</div>
                     <div class="kpi-val g" id="k-ret">—</div>
                     <div class="kpi-work" id="kw-ret">—</div>
-                    <div class="kpi-fml">100 − Logo Churn</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">Logo Churn</div>
                     <div class="kpi-val" id="k-lchurn">—</div>
                     <div class="kpi-work" id="kw-lchurn">—</div>
-                    <div class="kpi-fml">Clients Churned ÷ Clients Start × 100</div>
                 </div>
                 <div class="kpi">
                     <div class="kpi-lbl">Net Client Change</div>
                     <div class="kpi-val" id="k-netc">—</div>
                     <div class="kpi-work" id="kw-netc">—</div>
-                    <div class="kpi-fml">New Clients − Churned</div>
                 </div>
             </div>
 
@@ -746,9 +756,9 @@
                     </div>
                 </div>
                 <div class="sec-hdr"><span class="sec-title">Cash Position</span></div>
-                <div class="kpi-grid g5" id="cd-row1"></div>
+                <div class="kpi-grid g6" id="cd-row1"></div>
                 <div class="sec-hdr" style="margin-top:4px"><span class="sec-title">Performance</span></div>
-                <div class="kpi-grid g4" id="cd-row2"></div>
+                <div class="kpi-grid g3" id="cd-row2"></div>
                 <div class="sec-hdr" style="margin-top:8px"><span class="sec-title">Rolling Averages</span></div>
                 <div class="kpi-grid g3" id="cd-rolling-grid"></div>
             </div>
@@ -1140,19 +1150,16 @@
                         <div class="kpi-lbl">Lost Clients / Month</div>
                         <div class="kpi-val" id="fc-cd-lost">—</div>
                         <div class="kpi-work" id="kw-fc-cd-lost">—</div>
-                        <div class="kpi-fml">End Clients × Logo Churn Rate</div>
                     </div>
                     <div class="kpi">
                         <div class="kpi-lbl">Logo Churn</div>
                         <div class="kpi-val" id="fc-cd-lchurn">—</div>
                         <div class="kpi-work" id="kw-fc-cd-lchurn">—</div>
-                        <div class="kpi-fml">Clients Churned ÷ Clients Start</div>
                     </div>
                     <div class="kpi">
                         <div class="kpi-lbl">New Revenue / Month</div>
                         <div class="kpi-val" id="fc-cd-newrev">—</div>
                         <div class="kpi-work" id="kw-fc-cd-newrev">—</div>
-                        <div class="kpi-fml">New Clients × Rev/Client</div>
                     </div>
                 </div>
 
@@ -1177,13 +1184,11 @@
                         <div class="kpi-lbl">Current Clients</div>
                         <div class="kpi-val" id="fc-cur-clients">—</div>
                         <div class="kpi-work" id="kw-fc-cur-clients">—</div>
-                        <div class="kpi-fml">Start + New − Churned</div>
                     </div>
                     <div class="kpi">
                         <div class="kpi-lbl">Customer Ceiling <span style="font-weight:400;opacity:.6">(Hypothetical Max)</span></div>
                         <div class="kpi-val g" id="fc-cust-ceiling">—</div>
                         <div class="kpi-work" id="kw-fc-cust-ceiling">—</div>
-                        <div class="kpi-fml">New Clients ÷ Logo Churn Rate</div>
                     </div>
                 </div>
 
@@ -1197,13 +1202,11 @@
                         <div class="kpi-lbl">Current Revenue</div>
                         <div class="kpi-val" id="fc-cur-rev">—</div>
                         <div class="kpi-work" id="kw-fc-cur-rev">Direct input</div>
-                        <div class="kpi-fml">R</div>
                     </div>
                     <div class="kpi">
                         <div class="kpi-lbl">Revenue Ceiling <span style="font-weight:400;opacity:.6">(Hypothetical Max)</span></div>
                         <div class="kpi-val g" id="fc-rev-ceiling">—</div>
                         <div class="kpi-work" id="kw-fc-rev-ceiling">—</div>
-                        <div class="kpi-fml">New Rev/mo ÷ Rev Churn Rate</div>
                     </div>
                 </div>
 
@@ -1645,8 +1648,9 @@ function renderDashboard() {
         if (cls) el.className = 'kpi-val ' + cls;
     };
 
-    const w = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+    const w = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
     const lbl = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+    const blendNote = isBlended ? ['Blended across ' + nLabel + '.'] : [];
 
     // Dynamic heading labels
     lbl('lbl-rev',   isBlended ? 'Total Revenue'         : 'Total Monthly Revenue');
@@ -1654,76 +1658,160 @@ function renderDashboard() {
 
     // ── Revenue & Growth ────────────────────────────────────────────────────
     set('k-rev', f$(c.rev), 'kpi-val g');
-    w('kw-rev', isBlended
-        ? 'Sum across ' + nLabel + ' · Avg ' + fC(c.rev / c.n) + '/mo'
-        : f$(c.rev) + '  (direct input)');
+    w('kw-rev', cdWorkPanel({
+        num: 1, title: isBlended ? 'Total Revenue' : 'Total Monthly Revenue', cls: 'g',
+        desc: ['Direct monthly input.', 'Not derived from any other metric.', ...blendNote],
+        lines: [['Revenue', f$(c.rev)]],
+        formulaLbl: 'Total Revenue',
+        formulaSteps: isBlended
+            ? ['= Σ Revenue across ' + nLabel, '= ' + f$(c.rev) + ' (avg ' + fC(c.rev / c.n) + '/mo)']
+            : ['= Direct input', '= ' + f$(c.rev)],
+        resultLbl: 'Total Revenue', resultVal: f$(c.rev)
+    }));
 
     const ratioEl = document.getElementById('k-ratio');
     ratioEl.textContent = c.ratio !== null ? c.ratio.toFixed(1) + ':1' : '—';
-    w('kw-ratio', isBlended
-        ? (c.ltgp != null && c.cacVal != null ? 'Avg LTGP ' + fC(c.ltgp) + ' ÷ Blended CAC ' + fC(c.cacVal) : '—')
-        : (c.ltgp != null && c.cacVal != null ? fC(c.ltgp) + ' ÷ ' + fC(c.cacVal) : '—'));
+    w('kw-ratio', cdWorkPanel({
+        num: 2, title: 'LTGP : CAC', cls: c.ratio !== null ? (c.ratio >= 3 ? 'g' : 'r') : '',
+        desc: ['Lifetime gross profit per client vs. cost to acquire one.', 'Above 3:1 is generally considered healthy.', ...blendNote],
+        lines: [['LTGP', c.ltgp != null ? fC(c.ltgp) : '—'], ['CAC', c.cacVal != null ? fC(c.cacVal) : '—']],
+        formulaLbl: 'LTGP : CAC',
+        formulaSteps: c.ltgp != null && c.cacVal != null
+            ? ['= LTGP ÷ CAC', '= ' + fC(c.ltgp) + ' ÷ ' + fC(c.cacVal)]
+            : ['= LTGP ÷ CAC', 'Missing LTGP or CAC data'],
+        resultLbl: 'LTGP : CAC', resultVal: c.ratio !== null ? c.ratio.toFixed(1) + ':1' : '—'
+    }));
 
     // ── Profitability ───────────────────────────────────────────────────────
     const marginCls = v => 'kpi-val ' + (v >= 0 ? 'g' : 'r');
 
     set('k-gm', fPct(c.gm), marginCls(c.gm));
-    w('kw-gm', isBlended
-        ? 'Total GP ÷ Total Revenue (blended across ' + nLabel + ')'
-        : '(' + fC(c.rev) + ' − ' + fC(c.cogs) + ') ÷ ' + fC(c.rev));
+    w('kw-gm', cdWorkPanel({
+        num: 3, title: 'Gross Margin', cls: c.gm >= 0 ? 'g' : 'r',
+        desc: ['Revenue retained after direct costs (COGS).', 'Higher is better.', ...blendNote],
+        lines: [['Revenue', fC(c.rev)], ['COGS', fC(c.cogs), true]],
+        formulaLbl: 'Gross Margin',
+        formulaSteps: ['= (Revenue − COGS) ÷ Revenue × 100', '= (' + fC(c.rev) + ' − ' + fC(c.cogs) + ') ÷ ' + fC(c.rev) + ' × 100'],
+        resultLbl: 'Gross Margin', resultVal: fPct(c.gm)
+    }));
 
     set('k-nm', fPct(c.nm), marginCls(c.nm));
-    w('kw-nm', isBlended
-        ? 'Total Net Profit ÷ Total Revenue (blended)'
-        : 'GP ' + fC(c.gp) + ' − OpEx ' + fC(c.opex) + ' − Interest ' + fC(c.interest) + ' − Tax ' + fC(c.tax) + ' = ' + fC(c.np));
+    w('kw-nm', cdWorkPanel({
+        num: 4, title: 'Net Margin', cls: c.nm >= 0 ? 'g' : 'r',
+        desc: ['Profit retained after all costs.', 'Gross profit minus operating expenses, interest, and tax.', ...blendNote],
+        lines: [['Gross Profit', fC(c.gp)], ['OpEx (S&M + G&A + R&D)', fC(c.opex), true], ['Interest', fC(c.interest), true], ['Tax', fC(c.tax), true]],
+        formulaLbl: 'Net Margin',
+        formulaSteps: ['= (GP − OpEx − Interest − Tax) ÷ Revenue × 100', '= (' + fC(c.gp) + ' − ' + fC(c.opex) + ' − ' + fC(c.interest) + ' − ' + fC(c.tax) + ') ÷ ' + fC(c.rev) + ' = ' + fC(c.np)],
+        resultLbl: 'Net Margin', resultVal: fPct(c.nm)
+    }));
 
     set('k-tc', f$(c.tc));
-    w('kw-tc', isBlended
-        ? 'Total across ' + nLabel + ' (COGS + CAC + S&M + G&A + R&D + Interest + Tax)'
-        : fC(c.cogs) + ' COGS + ' + fC(c.totalCac) + ' CAC + ' + fC(c.sm) + ' S&M + ' + fC(c.ga) + ' G&A + ' + fC(c.rd) + ' R&D + ' + fC(c.interest) + ' Interest + ' + fC(c.tax) + ' Tax');
+    w('kw-tc', cdWorkPanel({
+        num: 5, title: 'Total Cost', cls: '',
+        desc: ['Every cost incurred this period.', 'COGS plus acquisition, operating, financing, and tax costs.', ...blendNote],
+        lines: [
+            ['COGS', fC(c.cogs), true], ['Total CAC', fC(c.totalCac), true], ['S&M', fC(c.sm), true],
+            ['G&A', fC(c.ga), true], ['R&D', fC(c.rd), true], ['Interest', fC(c.interest), true], ['Tax', fC(c.tax), true]
+        ],
+        formulaLbl: 'Total Cost',
+        formulaSteps: ['= COGS + Total CAC + S&M + G&A + R&D + Interest + Tax', '= ' + [c.cogs, c.totalCac, c.sm, c.ga, c.rd, c.interest, c.tax].map(fC).join(' + ')],
+        resultLbl: 'Total Cost', resultVal: f$(c.tc)
+    }));
 
     set('k-cogs', f$(c.cogs));
-    w('kw-cogs', isBlended
-        ? 'Total across ' + nLabel + ' · ' + fPct(c.rev > 0 ? c.cogs/c.rev*100 : 0) + ' of total revenue'
-        : fC(c.cogs) + '  ·  ' + fPct(c.rev > 0 ? c.cogs/c.rev*100 : 0) + ' of revenue');
+    w('kw-cogs', cdWorkPanel({
+        num: 6, title: 'COGS', cls: '',
+        desc: ['Direct cost of delivering the product/service.', 'Direct input — not derived from other metrics.', ...blendNote],
+        lines: [['COGS', fC(c.cogs)], ['Revenue', fC(c.rev)]],
+        formulaLbl: 'COGS',
+        formulaSteps: ['= Direct input · % of revenue = COGS ÷ Revenue × 100', '= ' + fC(c.cogs) + ' · ' + fPct(c.rev > 0 ? c.cogs / c.rev * 100 : 0) + ' of revenue'],
+        resultLbl: 'COGS', resultVal: f$(c.cogs)
+    }));
 
     // ── Unit Economics ──────────────────────────────────────────────────────
     set('k-ltgp', c.ltgp !== null ? f$(c.ltgp) : '—', 'kpi-val g');
-    w('kw-ltgp', c.ltgp != null
-        ? fC(c.gp) + ' GP ÷ ' + c.cs + ' starting clients = ' + fC(c.mgp) + '/mo × ' + fMo(c.lifespan) + ' lifespan'
-        : (c.cs <= 0 ? 'Need client data — enter New Clients & Starting MRR' : 'Need logo churn — enter Clients Churned'));
+    w('kw-ltgp', cdWorkPanel({
+        num: 7, title: 'LTGP', cls: 'g',
+        desc: ['Lifetime gross profit expected from one client.', 'Monthly gross profit per client × expected lifespan.', ...blendNote],
+        lines: [['Gross Profit', fC(c.gp)], ['Starting Clients', c.cs], ['Logo Churn', fPct(c.lchurn)]],
+        formulaLbl: 'LTGP',
+        formulaSteps: c.ltgp != null
+            ? ['= (GP ÷ Starting Clients) × (1 ÷ Logo Churn)', '= ' + fC(c.mgp) + '/mo × ' + fMo(c.lifespan) + ' lifespan']
+            : [c.cs <= 0 ? 'Need client data — enter New Clients & Starting MRR' : 'Need logo churn — enter Clients Churned'],
+        resultLbl: 'LTGP', resultVal: c.ltgp !== null ? f$(c.ltgp) : '—'
+    }));
 
     set('k-cac', c.cacVal !== null ? f$(c.cacVal) : '—');
-    w('kw-cac', isBlended
-        ? (c.nc > 0 ? 'Total spend ' + fC(c.totalCac) + ' ÷ ' + c.nc + ' clients acquired' : 'No clients acquired')
-        : 'Direct input');
+    w('kw-cac', cdWorkPanel({
+        num: 8, title: 'CAC', cls: '',
+        desc: isBlended
+            ? ['Cost to acquire one new client.', 'Blended: total acquisition spend ÷ total clients acquired.']
+            : ['Cost to acquire one new client.', 'Direct input.'],
+        lines: isBlended
+            ? [['Total CAC Spend', fC(c.totalCac)], ['New Clients Acquired', c.nc]]
+            : [['CAC (direct input)', c.cacVal !== null ? f$(c.cacVal) : '—']],
+        formulaLbl: 'CAC',
+        formulaSteps: isBlended
+            ? (c.nc > 0 ? ['= Total Spend ÷ Clients Acquired', '= ' + fC(c.totalCac) + ' ÷ ' + c.nc] : ['No clients acquired'])
+            : ['= Direct input', '= ' + (c.cacVal !== null ? f$(c.cacVal) : '—')],
+        resultLbl: 'CAC', resultVal: c.cacVal !== null ? f$(c.cacVal) : '—'
+    }));
 
     set('k-total-cac', f$(c.totalCac));
-    w('kw-total-cac', isBlended
-        ? 'Total across ' + nLabel + ' · ' + c.nc + ' clients acquired'
-        : (c.nc > 0 ? fC(c.cac) + ' × ' + c.nc + ' new clients' : 'No new clients this period'));
+    w('kw-total-cac', cdWorkPanel({
+        num: 9, title: 'Total CAC', cls: '',
+        desc: ['Total acquisition spend this period.', 'CAC per client × number of new clients.', ...blendNote],
+        lines: [['CAC per client', fC(c.cac)], ['New Clients', c.nc]],
+        formulaLbl: 'Total CAC',
+        formulaSteps: c.nc > 0
+            ? ['= CAC × New Clients', '= ' + fC(c.cac) + ' × ' + c.nc]
+            : ['No new clients this period'],
+        resultLbl: 'Total CAC', resultVal: f$(c.totalCac)
+    }));
 
     set('k-life', fMo(c.lifespan));
-    w('kw-life', c.lifespan !== null
-        ? '1 ÷ ' + fPct(c.lchurn) + ' logo churn = ' + fMo(c.lifespan)
-        : 'Need logo churn — enter Clients Churned & prior month');
+    w('kw-life', cdWorkPanel({
+        num: 10, title: 'Customer Lifespan', cls: '',
+        desc: ['Expected months a client stays before churning.', 'Inverse of the logo churn rate.', ...blendNote],
+        lines: [['Logo Churn Rate', fPct(c.lchurn)]],
+        formulaLbl: 'Customer Lifespan',
+        formulaSteps: c.lifespan !== null
+            ? ['= 1 ÷ Logo Churn Rate', '= 1 ÷ ' + fPct(c.lchurn) + ' = ' + fMo(c.lifespan)]
+            : ['Need logo churn — enter Clients Churned & prior month'],
+        resultLbl: 'Customer Lifespan', resultVal: fMo(c.lifespan)
+    }));
 
     // ── Retention & Churn ───────────────────────────────────────────────────
     set('k-ret', fPct(c.ret), 'kpi-val ' + (c.ret >= 95 ? 'g' : ''));
-    w('kw-ret', isBlended
-        ? 'Average across ' + nLabel
-        : '100 − ' + fPct(c.lchurn));
+    w('kw-ret', cdWorkPanel({
+        num: 11, title: 'Retention Rate', cls: c.ret >= 95 ? 'g' : '',
+        desc: ['Share of clients retained this period.', '100% minus logo churn.', ...blendNote],
+        lines: [['Logo Churn', fPct(c.lchurn)]],
+        formulaLbl: 'Retention Rate',
+        formulaSteps: ['= 100 − Logo Churn', '= 100 − ' + fPct(c.lchurn)],
+        resultLbl: 'Retention Rate', resultVal: fPct(c.ret)
+    }));
 
     set('k-lchurn', fPct(c.lchurn), 'kpi-val ' + (c.lchurn <= 5 ? 'g' : 'r'));
-    w('kw-lchurn', isBlended
-        ? 'Average across ' + nLabel
-        : c.ch + ' churned ÷ ' + c.cs + ' start × 100');
+    w('kw-lchurn', cdWorkPanel({
+        num: 12, title: 'Logo Churn', cls: c.lchurn <= 5 ? 'g' : 'r',
+        desc: ['Share of clients lost this period.', 'Clients churned ÷ clients at start.', ...blendNote],
+        lines: [['Clients Churned', c.ch, true], ['Clients at Start', c.cs]],
+        formulaLbl: 'Logo Churn',
+        formulaSteps: ['= Clients Churned ÷ Clients at Start × 100', '= ' + c.ch + ' ÷ ' + c.cs + ' × 100'],
+        resultLbl: 'Logo Churn', resultVal: fPct(c.lchurn)
+    }));
 
     const netc = c.nc - c.ch;   // New Clients − Clients Churned
     set('k-netc', (netc >= 0 ? '+' : '') + netc, 'kpi-val ' + (netc >= 0 ? 'g' : 'r'));
-    w('kw-netc', isBlended
-        ? c.nc + ' new − ' + c.ch + ' churned (across ' + nLabel + ')'
-        : c.nc + ' new − ' + c.ch + ' churned');
+    w('kw-netc', cdWorkPanel({
+        num: 13, title: 'Net Client Change', cls: netc >= 0 ? 'g' : 'r',
+        desc: ['Net change in client count this period.', 'New clients minus churned clients.', ...blendNote],
+        lines: [['New Clients', c.nc], ['Clients Churned', c.ch, true]],
+        formulaLbl: 'Net Client Change',
+        formulaSteps: ['= New Clients − Clients Churned', '= ' + c.nc + ' − ' + c.ch],
+        resultLbl: 'Net Client Change', resultVal: (netc >= 0 ? '+' : '') + netc
+    }));
 }
 
 // ══ Charts ══
@@ -2302,11 +2390,32 @@ function renderForecastSingle(c, f) {
     const lostPerMo = Math.round(f.currentClients * f.lchurnRate * 10) / 10;
     set('fc-cd-nc',     c.nc);
     set('fc-cd-lchurn', fPct(c.lchurn));
-    set('kw-fc-cd-lchurn', c.ch + ' churned ÷ ' + c.cs + ' start');
+    setHTML('kw-fc-cd-lchurn', cdWorkPanel({
+        num: 1, title: 'Logo Churn', cls: c.lchurn <= 5 ? 'g' : 'r',
+        desc: ['Share of clients lost this period.'],
+        lines: [['Clients Churned', c.ch, true], ['Clients at Start', c.cs]],
+        formulaLbl: 'Logo Churn',
+        formulaSteps: ['= Clients Churned ÷ Clients at Start × 100', '= ' + c.ch + ' ÷ ' + c.cs + ' × 100'],
+        resultLbl: 'Logo Churn', resultVal: fPct(c.lchurn)
+    }));
     set('fc-cd-lost',   lostPerMo.toFixed(1));
-    set('kw-fc-cd-lost', f.currentClients + ' × ' + fPct(c.lchurn));
+    setHTML('kw-fc-cd-lost', cdWorkPanel({
+        num: 2, title: 'Lost Clients / Month', cls: '',
+        desc: ['Expected clients lost this month at the current churn rate.'],
+        lines: [['Current Clients', f.currentClients], ['Logo Churn Rate', fPct(c.lchurn)]],
+        formulaLbl: 'Lost Clients / Month',
+        formulaSteps: ['= Current Clients × Logo Churn Rate', '= ' + f.currentClients + ' × ' + fPct(c.lchurn) + ' = ' + lostPerMo.toFixed(1)],
+        resultLbl: 'Lost Clients / Month', resultVal: lostPerMo.toFixed(1)
+    }));
     set('fc-cd-newrev', fC(f.newRevAdded));
-    set('kw-fc-cd-newrev', c.nc + ' × ' + f$(c.arpu));
+    setHTML('kw-fc-cd-newrev', cdWorkPanel({
+        num: 3, title: 'New Revenue / Month', cls: '',
+        desc: ['Revenue added by new clients this month.'],
+        lines: [['New Clients', c.nc], ['Revenue per Client (ARPU)', f$(c.arpu)]],
+        formulaLbl: 'New Revenue / Month',
+        formulaSteps: ['= New Clients × Revenue per Client', '= ' + c.nc + ' × ' + f$(c.arpu)],
+        resultLbl: 'New Revenue / Month', resultVal: fC(f.newRevAdded)
+    }));
 
     // ── Direction Card ──
     const dirCard = document.getElementById('fc-direction');
@@ -2329,11 +2438,27 @@ function renderForecastSingle(c, f) {
     custBadge.textContent = statusLabel(f.customerStatus); custBadge.className = 'status-badge ' + f.customerStatus;
 
     set('fc-cur-clients', f.currentClients.toLocaleString('en-US'));
-    set('kw-fc-cur-clients', c.cs + ' + ' + c.nc + ' − ' + c.ch + ' = ' + f.currentClients);
+    setHTML('kw-fc-cur-clients', cdWorkPanel({
+        num: 4, title: 'Current Clients', cls: '',
+        desc: ['Clients at the end of this period.'],
+        lines: [['Clients at Start', c.cs], ['New Clients', c.nc], ['Clients Churned', c.ch, true]],
+        formulaLbl: 'Current Clients',
+        formulaSteps: ['= Start + New − Churned', '= ' + c.cs + ' + ' + c.nc + ' − ' + c.ch + ' = ' + f.currentClients],
+        resultLbl: 'Current Clients', resultVal: f.currentClients.toLocaleString('en-US')
+    }));
 
     const ceiling = f.customerCeiling !== null ? Math.round(f.customerCeiling) : null;
     set('fc-cust-ceiling', ceiling !== null ? ceiling.toLocaleString('en-US') : '—');
-    set('kw-fc-cust-ceiling', ceiling !== null ? c.nc + ' ÷ ' + fPct(c.lchurn) + ' = ' + ceiling : 'Need acquisition & churn data');
+    setHTML('kw-fc-cust-ceiling', cdWorkPanel({
+        num: 5, title: 'Customer Ceiling', cls: 'g',
+        desc: ['Hypothetical maximum client count if growth and churn rates hold forever.', 'Steady-state where new clients in equals clients lost.'],
+        lines: [['New Clients / Month', c.nc], ['Logo Churn Rate', fPct(c.lchurn)]],
+        formulaLbl: 'Customer Ceiling',
+        formulaSteps: ceiling !== null
+            ? ['= New Clients ÷ Logo Churn Rate', '= ' + c.nc + ' ÷ ' + fPct(c.lchurn) + ' = ' + ceiling.toLocaleString('en-US')]
+            : ['Need acquisition & churn data'],
+        resultLbl: 'Customer Ceiling', resultVal: ceiling !== null ? ceiling.toLocaleString('en-US') : '—'
+    }));
 
     const custGapVal = ceiling !== null ? ceiling - f.currentClients : null;
     set('fc-cust-gap', custGapVal !== null ? (custGapVal >= 0 ? '+' : '') + Math.round(custGapVal).toLocaleString('en-US') : '—');
@@ -2372,10 +2497,27 @@ function renderForecastSingle(c, f) {
     revBadge.textContent = statusLabel(f.revStatus); revBadge.className = 'status-badge ' + f.revStatus;
 
     set('fc-cur-rev', f$(c.rev));
+    setHTML('kw-fc-cur-rev', cdWorkPanel({
+        num: 6, title: 'Current Revenue', cls: '',
+        desc: ['Direct monthly input.', 'Not derived from other metrics.'],
+        lines: [['Revenue', f$(c.rev)]],
+        formulaLbl: 'Current Revenue',
+        formulaSteps: ['= Direct input', '= ' + f$(c.rev)],
+        resultLbl: 'Current Revenue', resultVal: f$(c.rev)
+    }));
 
     const revCeil = f.revCeiling !== null ? Math.round(f.revCeiling) : null;
     set('fc-rev-ceiling', revCeil !== null ? f$(revCeil) : '—');
-    set('kw-fc-rev-ceiling', revCeil !== null ? fC(f.newRevAdded) + ' ÷ ' + fPct(c.lchurn) + ' logo churn = ' + fC(revCeil) : 'Need acquisition & churn data');
+    setHTML('kw-fc-rev-ceiling', cdWorkPanel({
+        num: 7, title: 'Revenue Ceiling', cls: 'g',
+        desc: ['Hypothetical maximum revenue if growth and churn rates hold forever.'],
+        lines: [['New Revenue / Month', fC(f.newRevAdded)], ['Logo Churn Rate', fPct(c.lchurn)]],
+        formulaLbl: 'Revenue Ceiling',
+        formulaSteps: revCeil !== null
+            ? ['= New Revenue ÷ Logo Churn Rate', '= ' + fC(f.newRevAdded) + ' ÷ ' + fPct(c.lchurn) + ' = ' + fC(revCeil)]
+            : ['Need acquisition & churn data'],
+        resultLbl: 'Revenue Ceiling', resultVal: revCeil !== null ? f$(revCeil) : '—'
+    }));
 
     const revGapVal = revCeil !== null ? revCeil - c.rev : null;
     set('fc-rev-gap', revGapVal !== null ? (revGapVal >= 0 ? '' : '−') + f$(Math.abs(Math.round(revGapVal))) : '—');
@@ -2784,6 +2926,32 @@ function cdFmtRw(v) {
     return v.toFixed(1) + ' mo';
 }
 
+/* Detailed workings panel — shown inside .kpi-work when a KPI card's "Show working" toggle is open */
+function cdWorkPanel(opts) {
+    const { num, title, desc, lines, formulaLbl, formulaSteps, resultLbl, resultVal, resultSub, cls } = opts;
+    const descHtml  = desc.map(d => `<div>${d}</div>`).join('');
+    const linesHtml = lines.map(([l, v, neg]) => `<div class="kw-pline"><span>${l}</span><span class="${neg ? 'kw-neg' : ''}">${v}</span></div>`).join('');
+    const stepsHtml = formulaSteps.map(s => `<div class="kw-pformula">${s}</div>`).join('');
+    return `
+        <div class="kw-panel">
+            <div class="kw-ptitle">${num}. ${title}</div>
+            <div class="kw-pdesc">${descHtml}</div>
+            <div class="kw-pdiv"></div>
+            ${linesHtml}
+            <div class="kw-pdiv"></div>
+            <div class="kw-pformula-lbl">${formulaLbl}</div>
+            ${stepsHtml}
+            <div class="kw-pdiv"></div>
+            <div class="kw-presult ${cls}">
+                <div class="kw-presult-lbl">${resultLbl}</div>
+                <div class="kw-presult-val">${resultVal}</div>
+                ${resultSub ? `<div class="kw-presult-sub">${resultSub}</div>` : ''}
+            </div>
+        </div>`;
+}
+function cdFmtMonths(v) { return v === null ? '∞' : v.toFixed(2) + ' months'; }
+function cdFmtDaysApprox(v) { return v === null ? null : '(≈ ' + Math.round(Math.max(v, 0) * 30.44) + ' days)'; }
+
 // ── Tab navigation (within page-cash) ──
 let cashActiveTab = 'overview';
 
@@ -2844,97 +3012,184 @@ function cashRenderOverview() {
         return `<div class="kpi-delta ${cls}">${sgn} ${cdFmt(Math.abs(d))}</div>`;
     }
 
-    /* Build inflow / outflow breakdown strings for workings */
-    const inflowLines = [
-        ['Customer Payments (Recurring)', m.customerPaymentsRecurring], ['Customer Payments (One-off)', m.customerPaymentsOneOff],
-        ['Loan Proceeds', m.loanProceeds], ['Other Income', m.otherIncome]
-    ].filter(([, v]) => v > 0).map(([l, v]) => l + ': ' + cdFmtFull(v)).join(' · ') || 'No inflows entered';
+    const cgrTxt = c.cashGrowthRate !== null ? (c.cashGrowthRate >= 0 ? '+' : '') + c.cashGrowthRate.toFixed(1) + '%' : '—';
+    const cgrCls = c.cashGrowthRate === null ? '' : c.cashGrowthRate >= 0 ? 'g' : 'r';
 
-    const outflowLines = [
-        ['Payroll', m.payroll], ['Contractors', m.contractors], ['Marketing', m.marketing],
-        ['Software', m.software], ['Rent', m.rent], ['Inventory', m.inventory],
-        ['Taxes', m.taxes], ['Debt Repayment', m.debtRepayment],
-        ['Owner Draws', m.ownerDraws], ['Misc', m.miscExpenses]
-    ].filter(([, v]) => v > 0).map(([l, v]) => l + ': ' + cdFmtFull(v)).join(' · ') || 'No outflows entered';
+    const totalInPanel = cdWorkPanel({
+        num: 1, title: 'Total Cash In', cls: 'g',
+        desc: ['Sum of every cash inflow this month.', 'Includes recurring and one-off income, plus loans and other income.'],
+        lines: [
+            ['Customer Payments (Recurring)', cdFmtFull(m.customerPaymentsRecurring)],
+            ['Customer Payments (One-off)', cdFmtFull(m.customerPaymentsOneOff)],
+            ['Loan Proceeds', cdFmtFull(m.loanProceeds)],
+            ['Other Income', cdFmtFull(m.otherIncome)]
+        ],
+        formulaLbl: 'Total Cash In',
+        formulaSteps: [
+            '= Recurring + One-off + Loan Proceeds + Other Income',
+            '= ' + [m.customerPaymentsRecurring, m.customerPaymentsOneOff, m.loanProceeds, m.otherIncome].map(cdFmtFull).join(' + ')
+        ],
+        resultLbl: 'Total Cash In', resultVal: cdFmtFull(c.totalIn)
+    });
+
+    const totalOutPanel = cdWorkPanel({
+        num: 2, title: 'Total Cash Out', cls: 'r',
+        desc: ['Sum of every cash outflow this month.', 'Includes all operating expense categories.'],
+        lines: [
+            ['Payroll', cdFmtFull(m.payroll), true], ['Contractors', cdFmtFull(m.contractors), true],
+            ['Marketing', cdFmtFull(m.marketing), true], ['Software & Tools', cdFmtFull(m.software), true],
+            ['Rent & Facilities', cdFmtFull(m.rent), true], ['Inventory', cdFmtFull(m.inventory), true],
+            ['Taxes', cdFmtFull(m.taxes), true], ['Debt Repayment', cdFmtFull(m.debtRepayment), true],
+            ['Owner Draws', cdFmtFull(m.ownerDraws), true], ['Misc Expenses', cdFmtFull(m.miscExpenses), true]
+        ],
+        formulaLbl: 'Total Cash Out',
+        formulaSteps: [
+            '= Payroll + Contractors + Marketing + Software + Rent + Inventory + Taxes + Debt Repayment + Owner Draws + Misc',
+            '= ' + [m.payroll, m.contractors, m.marketing, m.software, m.rent, m.inventory, m.taxes, m.debtRepayment, m.ownerDraws, m.miscExpenses].map(cdFmtFull).join(' + ')
+        ],
+        resultLbl: 'Total Cash Out', resultVal: cdFmtFull(c.totalOut)
+    });
+
+    const netFlowPanel = cdWorkPanel({
+        num: 3, title: 'Net Cash Flow', cls: c.net >= 0 ? 'g' : 'r',
+        desc: ['Actual change in cash this month.', 'Total in minus total out — no assumptions.'],
+        lines: [['Total Cash In', cdFmtFull(c.totalIn)], ['Total Cash Out', cdFmtFull(c.totalOut), true]],
+        formulaLbl: 'Net Cash Flow',
+        formulaSteps: ['= Total Cash In − Total Cash Out', '= ' + cdFmtFull(c.totalIn) + ' − ' + cdFmtFull(c.totalOut)],
+        resultLbl: 'Net Cash Flow', resultVal: cdFmtFull(c.net)
+    });
+
+    const openingPanel = cdWorkPanel({
+        num: 4, title: 'Opening Cash', cls: '',
+        desc: ['Cash balance at the start of the month.', 'Always a manual entry — never auto-chained from the prior month.'],
+        lines: [['Opening Cash Balance', cdFmtFull(c.opening)]],
+        formulaLbl: 'Opening Cash',
+        formulaSteps: ['= Manual entry', '= ' + cdFmtFull(c.opening)],
+        resultLbl: 'Opening Cash', resultVal: cdFmtFull(c.opening)
+    });
+
+    const closingPanel = cdWorkPanel({
+        num: 5, title: 'Closing Cash', cls: c.closing >= 0 ? 'g' : 'r',
+        desc: ['Projected cash balance at month end.', 'Opening cash plus this month\'s net cash flow.'],
+        lines: [['Opening Cash', cdFmtFull(c.opening)], ['Net Cash Flow', cdFmtFull(c.net)]],
+        formulaLbl: 'Closing Cash',
+        formulaSteps: ['= Opening Cash + Net Cash Flow', '= ' + cdFmtFull(c.opening) + ' + ' + cdFmtFull(c.net)],
+        resultLbl: 'Closing Cash', resultVal: cdFmtFull(c.closing)
+    });
+
+    const cgrPanel = cdWorkPanel({
+        num: 6, title: 'Cash Growth Rate', cls: cgrCls,
+        desc: ['Percentage change in cash relative to opening balance.', 'Positive means cash grew this month.'],
+        lines: [['Net Cash Flow', cdFmtFull(c.net)], ['Opening Cash', cdFmtFull(c.opening)]],
+        formulaLbl: 'Cash Growth Rate',
+        formulaSteps: c.cashGrowthRate !== null
+            ? ['= Net Cash Flow ÷ Opening Cash × 100', '= ' + cdFmtFull(c.net) + ' ÷ ' + cdFmtFull(c.opening) + ' × 100']
+            : ['= Net Cash Flow ÷ Opening Cash × 100', 'No opening cash balance entered'],
+        resultLbl: 'Cash Growth Rate', resultVal: cgrTxt
+    });
 
     document.getElementById('cd-row1').innerHTML = `
         <div class="kpi" title="Total Cash In = sum of all inflow categories">
             <div class="kpi-lbl">Total Cash In</div>
             <div class="kpi-val g">${cdFmt(c.totalIn)}</div>
-            <div class="kpi-work">${inflowLines}</div>
-            <div class="kpi-fml">Sum of all inflow categories</div>
+            <div class="kpi-work">${totalInPanel}</div>
             ${dBadge(c, prev, 'totalIn')}
         </div>
         <div class="kpi" title="Total Cash Out = sum of all outflow categories">
             <div class="kpi-lbl">Total Cash Out</div>
             <div class="kpi-val r">${cdFmt(c.totalOut)}</div>
-            <div class="kpi-work">${outflowLines}</div>
-            <div class="kpi-fml">Sum of all outflow categories</div>
+            <div class="kpi-work">${totalOutPanel}</div>
             ${dBadge(c, prev, 'totalOut')}
         </div>
         <div class="kpi" title="Net Cash Flow = Total In − Total Out">
             <div class="kpi-lbl">Net Cash Flow</div>
             <div class="kpi-val ${c.net >= 0 ? 'g' : 'r'}">${cdFmt(c.net)}</div>
-            <div class="kpi-work">${cdFmtFull(c.totalIn)} − ${cdFmtFull(c.totalOut)}</div>
-            <div class="kpi-fml">Total Cash In − Total Cash Out</div>
+            <div class="kpi-work">${netFlowPanel}</div>
             ${dBadge(c, prev, 'net')}
         </div>
         <div class="kpi" title="Opening Cash — entered manually for this month">
             <div class="kpi-lbl">Opening Cash</div>
             <div class="kpi-val">${cdFmt(c.opening)}</div>
-            <div class="kpi-work">Manual entry: ${cdFmtFull(c.opening)}</div>
-            <div class="kpi-fml">Manual input</div>
+            <div class="kpi-work">${openingPanel}</div>
         </div>
         <div class="kpi" title="Closing Cash = Opening + Net Cash Flow">
             <div class="kpi-lbl">Closing Cash</div>
             <div class="kpi-val ${c.closing >= 0 ? 'g' : 'r'}">${cdFmt(c.closing)}</div>
-            <div class="kpi-work">${cdFmtFull(c.opening)} + ${cdFmt(c.net)}</div>
-            <div class="kpi-fml">Opening Cash + Net Cash Flow</div>
+            <div class="kpi-work">${closingPanel}</div>
             ${dBadge(c, prev, 'closing')}
+        </div>
+        <div class="kpi" title="Cash Growth Rate = Net Cash Flow ÷ Opening Cash × 100">
+            <div class="kpi-lbl">Cash Growth Rate</div>
+            <div class="kpi-val ${cgrCls}">${cgrTxt}</div>
+            <div class="kpi-work">${cgrPanel}</div>
         </div>`;
 
     const gbrCls = c.grossBurnRunway === null || c.grossBurnRunway >= 12 ? 'g' : c.grossBurnRunway >= 3 ? 'a' : 'r';
-    const gbrWork = c.grossBurnRunway === null
-        ? 'No gross burn — runway is infinite'
-        : cdFmtFull(c.opening) + ' ÷ ' + cdFmt(c.burn) + ' gross burn = ' + cdFmtRw(c.grossBurnRunway);
-
-    const nbrCls = c.netBurnRunway === null ? 'g' : c.netBurnRunway >= 12 ? 'g' : c.netBurnRunway >= 3 ? 'a' : 'r';
-    const nbrWork = c.netBurnRunway === null
-        ? (c.netBurn >= 0 ? 'Cash generating — no net burn' : 'No opening cash to deplete')
-        : cdFmtFull(c.opening) + ' ÷ ' + cdFmt(Math.abs(c.netBurn)) + ' net burn = ' + cdFmtRw(c.netBurnRunway);
+    const gbrPanel = cdWorkPanel({
+        num: 7, title: 'Gross Burn Runway', cls: gbrCls,
+        desc: ['Ignores all inflows.', 'Assumes revenue stops today.'],
+        lines: [
+            ['Cash on hand', cdFmtFull(c.opening)],
+            ['Monthly cash outflows (gross burn)', cdFmtFull(c.burn), true]
+        ],
+        formulaLbl: 'Gross Burn Runway',
+        formulaSteps: ['= Cash ÷ Gross Burn', '= ' + cdFmtFull(c.opening) + ' ÷ ' + cdFmtFull(c.burn)],
+        resultLbl: 'Gross Burn Runway',
+        resultVal: cdFmtMonths(c.grossBurnRunway),
+        resultSub: cdFmtDaysApprox(c.grossBurnRunway)
+    });
 
     const drCls = c.defaultRate === null ? 'g' : c.defaultRate >= 12 ? 'g' : c.defaultRate >= 3 ? 'a' : 'r';
-    const drWork = c.defaultRate === null
-        ? 'Reliable income alone covers cash outflows — no default burn'
-        : cdFmtFull(c.opening) + ' ÷ ' + cdFmt(c.defaultBurn) + ' default burn = ' + cdFmtRw(c.defaultRate);
+    const drPanel = cdWorkPanel({
+        num: 8, title: 'Default Rate', cls: drCls,
+        desc: ['Survival if nothing new goes right.', 'Counts only reliable, recurring income — excludes one-off payments, pipeline deals, and fundraising.'],
+        lines: [
+            ['Cash on hand', cdFmtFull(c.opening)],
+            ['Total cash outflows', cdFmtFull(c.burn), true],
+            ['Reliable cash inflows (recurring)', cdFmtFull(c.reliableCashIn)]
+        ],
+        formulaLbl: 'Default Rate',
+        formulaSteps: c.defaultRate === null
+            ? ['= Cash ÷ (Outflows − Reliable Inflows)', '= ' + cdFmtFull(c.opening) + ' ÷ (' + cdFmtFull(c.burn) + ' − ' + cdFmtFull(c.reliableCashIn) + ')', 'Reliable income covers outflows → no default burn']
+            : ['= Cash ÷ (Outflows − Reliable Inflows)', '= ' + cdFmtFull(c.opening) + ' ÷ (' + cdFmtFull(c.burn) + ' − ' + cdFmtFull(c.reliableCashIn) + ')', '= ' + cdFmtFull(c.opening) + ' ÷ ' + cdFmtFull(c.defaultBurn)],
+        resultLbl: 'Default Rate',
+        resultVal: cdFmtMonths(c.defaultRate),
+        resultSub: cdFmtDaysApprox(c.defaultRate)
+    });
 
-    const cgrTxt = c.cashGrowthRate !== null ? (c.cashGrowthRate >= 0 ? '+' : '') + c.cashGrowthRate.toFixed(1) + '%' : '—';
-    const cgrCls = c.cashGrowthRate === null ? '' : c.cashGrowthRate >= 0 ? 'g' : 'r';
+    const nbrCls = c.netBurnRunway === null ? 'g' : c.netBurnRunway >= 12 ? 'g' : c.netBurnRunway >= 3 ? 'a' : 'r';
+    const nbrPanel = cdWorkPanel({
+        num: 9, title: 'Net Burn Runway', cls: nbrCls,
+        desc: ['Survival if current income continues at today\'s pace.', 'Includes all operating cash in (recurring + one-off), excludes financing.'],
+        lines: [
+            ['Cash on hand', cdFmtFull(c.opening)],
+            ['Total cash outflows', cdFmtFull(c.burn), true],
+            ['Operating cash in (recurring + one-off)', cdFmtFull(c.cashInOperating)]
+        ],
+        formulaLbl: 'Net Burn Runway',
+        formulaSteps: c.netBurnRunway === null
+            ? ['= Cash ÷ |Operating In − Outflows|', '= ' + cdFmtFull(c.opening) + ' ÷ |' + cdFmtFull(c.cashInOperating) + ' − ' + cdFmtFull(c.burn) + '|', 'Operating income covers outflows → no net burn']
+            : ['= Cash ÷ |Operating In − Outflows|', '= ' + cdFmtFull(c.opening) + ' ÷ |' + cdFmtFull(c.cashInOperating) + ' − ' + cdFmtFull(c.burn) + '|', '= ' + cdFmtFull(c.opening) + ' ÷ ' + cdFmtFull(Math.abs(c.netBurn))],
+        resultLbl: 'Net Burn Runway',
+        resultVal: cdFmtMonths(c.netBurnRunway),
+        resultSub: cdFmtDaysApprox(c.netBurnRunway)
+    });
 
     document.getElementById('cd-row2').innerHTML = `
         <div class="kpi" title="Gross Burn Runway = Opening Cash ÷ Gross Burn. Worst case if all income stopped today.">
             <div class="kpi-lbl">Gross Burn Runway</div>
             <div class="kpi-val ${gbrCls}">${cdFmtRw(c.grossBurnRunway)}</div>
-            <div class="kpi-work">${gbrWork}</div>
-            <div class="kpi-fml">Opening Cash ÷ Gross Burn</div>
-        </div>
-        <div class="kpi" title="Net Burn Runway = Opening Cash ÷ |Net Burn|. Infinite when operating cash in covers gross burn.">
-            <div class="kpi-lbl">Net Burn Runway</div>
-            <div class="kpi-val ${nbrCls}">${cdFmtRw(c.netBurnRunway)}</div>
-            <div class="kpi-work">${nbrWork}</div>
-            <div class="kpi-fml">Opening Cash ÷ |Operating Cash In − Gross Burn|</div>
+            <div class="kpi-work">${gbrPanel}</div>
         </div>
         <div class="kpi" title="Default Rate = Opening Cash ÷ Default Burn. Survival if nothing new goes right but reliable income (recurring Customer Payments) continues. Excludes one-off payments, pipeline, fundraising.">
             <div class="kpi-lbl">Default Rate</div>
             <div class="kpi-val ${drCls}">${cdFmtRw(c.defaultRate)}</div>
-            <div class="kpi-work">${drWork}</div>
-            <div class="kpi-fml">Opening Cash ÷ (Cash Outflows − Reliable Cash Inflows)</div>
+            <div class="kpi-work">${drPanel}</div>
         </div>
-        <div class="kpi" title="Cash Growth Rate = Net Cash Flow ÷ Opening Cash × 100">
-            <div class="kpi-lbl">Cash Growth Rate</div>
-            <div class="kpi-val ${cgrCls}">${cgrTxt}</div>
-            <div class="kpi-work">${c.cashGrowthRate !== null ? cdFmtFull(c.net) + ' ÷ ' + cdFmtFull(c.opening) : 'No opening cash balance'}</div>
-            <div class="kpi-fml">Net Cash Flow ÷ Opening Cash</div>
+        <div class="kpi" title="Net Burn Runway = Opening Cash ÷ |Net Burn|. Infinite when operating cash in covers gross burn.">
+            <div class="kpi-lbl">Net Burn Runway</div>
+            <div class="kpi-val ${nbrCls}">${cdFmtRw(c.netBurnRunway)}</div>
+            <div class="kpi-work">${nbrPanel}</div>
         </div>`;
 
     /* Rolling Averages */
@@ -3136,63 +3391,141 @@ function retRenderOverview() {
         return `<div class="kpi-delta ${cls}">${d > 0 ? '▲' : d < 0 ? '▼' : '—'} ${cdFmt(Math.abs(d))}</div>`;
     }
 
+    const startMRRPanel = cdWorkPanel({
+        num: 1, title: 'Starting MRR', cls: '',
+        desc: ['Manual entry — opening recurring revenue for the month.', 'Not derived from other metrics.'],
+        lines: [['Starting MRR', cdFmtFull(c.startMRR)]],
+        formulaLbl: 'Starting MRR',
+        formulaSteps: ['= Manual entry for ' + cdLabel(cashMonths[idx].id), '= ' + cdFmtFull(c.startMRR)],
+        resultLbl: 'Starting MRR', resultVal: cdFmtFull(c.startMRR)
+    });
+
+    const endMRRPanel = cdWorkPanel({
+        num: 2, title: 'Ending MRR', cls: '',
+        desc: ['Recurring revenue at month end.', 'Starting MRR adjusted for new, expansion, contraction, and churn.'],
+        lines: [
+            ['Starting MRR', cdFmtFull(c.startMRR)], ['New MRR', cdFmtFull(c.newMRR)], ['Expansion MRR', cdFmtFull(c.expMRR)],
+            ['Contraction MRR', cdFmtFull(c.conMRR), true], ['Churned MRR', cdFmtFull(c.churnMRR), true]
+        ],
+        formulaLbl: 'Ending MRR',
+        formulaSteps: ['= Starting + New + Expansion − Contraction − Churned',
+            '= ' + cdFmtFull(c.startMRR) + ' + ' + cdFmtFull(c.newMRR) + ' + ' + cdFmtFull(c.expMRR) + ' − ' + cdFmtFull(c.conMRR) + ' − ' + cdFmtFull(c.churnMRR)],
+        resultLbl: 'Ending MRR', resultVal: cdFmtFull(c.endMRR)
+    });
+
+    const netMRRGrowthPanel = cdWorkPanel({
+        num: 3, title: 'Net MRR Growth', cls: c.netMRRGrowth >= 0 ? 'g' : 'r',
+        desc: ['Absolute change in recurring revenue this month.', 'Ending MRR minus starting MRR.'],
+        lines: [['Ending MRR', cdFmtFull(c.endMRR)], ['Starting MRR', cdFmtFull(c.startMRR), true]],
+        formulaLbl: 'Net MRR Growth',
+        formulaSteps: ['= Ending MRR − Starting MRR', '= ' + cdFmtFull(c.endMRR) + ' − ' + cdFmtFull(c.startMRR)],
+        resultLbl: 'Net MRR Growth', resultVal: cdFmtFull(c.netMRRGrowth)
+    });
+
+    const mrrGrowthPctPanel = cdWorkPanel({
+        num: 4, title: 'MRR Growth %', cls: c.mrrGrowthPct === null ? '' : c.mrrGrowthPct >= 0 ? 'g' : 'r',
+        desc: ['Percentage change in recurring revenue relative to starting MRR.'],
+        lines: [['Net MRR Growth', cdFmtFull(c.netMRRGrowth)], ['Starting MRR', cdFmtFull(c.startMRR)]],
+        formulaLbl: 'MRR Growth %',
+        formulaSteps: c.mrrGrowthPct !== null
+            ? ['= Net MRR Growth ÷ Starting MRR × 100', '= ' + cdFmtFull(c.netMRRGrowth) + ' ÷ ' + cdFmtFull(c.startMRR) + ' × 100']
+            : ['No starting MRR entered'],
+        resultLbl: 'MRR Growth %', resultVal: pct(c.mrrGrowthPct)
+    });
+
     document.getElementById('ret-row1').innerHTML = `
         <div class="kpi" title="Starting MRR this month">
             <div class="kpi-lbl">Starting MRR</div>
             <div class="kpi-val" style="color:#a78bfa">${cdFmt(c.startMRR)}</div>
-            <div class="kpi-work">Manual entry for ${cdLabel(cashMonths[idx].id)}</div>
-            <div class="kpi-fml">Input — opening recurring revenue</div>
+            <div class="kpi-work">${startMRRPanel}</div>
             ${mb(c, prev, 'startMRR')}
         </div>
         <div class="kpi" title="Ending MRR = Starting + New + Expansion − Contraction − Churned">
             <div class="kpi-lbl">Ending MRR</div>
             <div class="kpi-val" style="color:#a78bfa">${cdFmt(c.endMRR)}</div>
-            <div class="kpi-work">${cdFmt(c.startMRR)} + ${cdFmt(c.newMRR)} + ${cdFmt(c.expMRR)} − ${cdFmt(c.conMRR)} − ${cdFmt(c.churnMRR)}</div>
-            <div class="kpi-fml">Starting + New + Expansion − Contraction − Churned</div>
+            <div class="kpi-work">${endMRRPanel}</div>
             ${mb(c, prev, 'endMRR')}
         </div>
         <div class="kpi" title="Net MRR Growth = Ending − Starting">
             <div class="kpi-lbl">Net MRR Growth</div>
             <div class="kpi-val ${c.netMRRGrowth >= 0 ? 'g' : 'r'}">${cdFmt(c.netMRRGrowth)}</div>
-            <div class="kpi-work">${cdFmt(c.endMRR)} − ${cdFmt(c.startMRR)}</div>
-            <div class="kpi-fml">Ending MRR − Starting MRR</div>
+            <div class="kpi-work">${netMRRGrowthPanel}</div>
             ${mb(c, prev, 'netMRRGrowth')}
         </div>
         <div class="kpi" title="MRR Growth % = Net Growth ÷ Starting MRR">
             <div class="kpi-lbl">MRR Growth %</div>
             <div class="kpi-val ${c.mrrGrowthPct === null ? '' : c.mrrGrowthPct >= 0 ? 'g' : 'r'}">${pct(c.mrrGrowthPct)}</div>
-            <div class="kpi-work">${cdFmt(c.netMRRGrowth)} ÷ ${cdFmt(c.startMRR)}</div>
-            <div class="kpi-fml">Net MRR Growth ÷ Starting MRR</div>
+            <div class="kpi-work">${mrrGrowthPctPanel}</div>
             ${pp(c, prev, 'mrrGrowthPct')}
         </div>`;
+
+    const nrrPanel = cdWorkPanel({
+        num: 5, title: 'Net Retention Rate (NRR)', cls: c.nrr === null ? '' : c.nrr >= 1 ? 'g' : 'r',
+        desc: ['Recurring revenue retained from existing customers.', 'Excludes new business — above 100% means expansion outpaces churn.'],
+        lines: [
+            ['Starting MRR', cdFmtFull(c.startMRR)], ['Expansion MRR', cdFmtFull(c.expMRR)],
+            ['Contraction MRR', cdFmtFull(c.conMRR), true], ['Churned MRR', cdFmtFull(c.churnMRR), true]
+        ],
+        formulaLbl: 'Net Retention Rate (NRR)',
+        formulaSteps: ['= (Starting + Expansion − Contraction − Churn) ÷ Starting',
+            '= (' + cdFmtFull(c.startMRR) + ' + ' + cdFmtFull(c.expMRR) + ' − ' + cdFmtFull(c.conMRR) + ' − ' + cdFmtFull(c.churnMRR) + ') ÷ ' + cdFmtFull(c.startMRR)],
+        resultLbl: 'Net Retention Rate (NRR)', resultVal: pct(c.nrr)
+    });
+
+    const grrPanel = cdWorkPanel({
+        num: 6, title: 'Revenue Churn (GRR)', cls: rchurn !== null ? (rchurn <= 2 ? 'g' : rchurn <= 5 ? 'a' : 'r') : '',
+        desc: ['Recurring revenue lost to churn and contraction.', 'Lower is better.'],
+        lines: [['Churned MRR', cdFmtFull(c.churnMRR), true], ['Contraction MRR', cdFmtFull(c.conMRR), true], ['Starting MRR', cdFmtFull(c.startMRR)]],
+        formulaLbl: 'Revenue Churn (GRR)',
+        formulaSteps: rchurn !== null
+            ? ['= (Churned + Contraction) ÷ Starting MRR × 100', '= (' + cdFmtFull(c.churnMRR) + ' + ' + cdFmtFull(c.conMRR) + ') ÷ ' + cdFmtFull(c.startMRR)]
+            : ['Enter Starting MRR & Churned MRR in Data Input'],
+        resultLbl: 'Revenue Churn (GRR)', resultVal: rchurn !== null ? rchurn.toFixed(1) + '%' : '—'
+    });
+
+    const expRatePanel = cdWorkPanel({
+        num: 7, title: 'Expansion Rate', cls: c.expRate !== null && c.expRate > 0 ? 'g' : '',
+        desc: ['Additional recurring revenue from existing customers.', 'Upsells and upgrades relative to starting MRR.'],
+        lines: [['Expansion MRR', cdFmtFull(c.expMRR)], ['Starting MRR', cdFmtFull(c.startMRR)]],
+        formulaLbl: 'Expansion Rate',
+        formulaSteps: ['= Expansion MRR ÷ Starting MRR', '= ' + cdFmtFull(c.expMRR) + ' ÷ ' + cdFmtFull(c.startMRR)],
+        resultLbl: 'Expansion Rate', resultVal: pct(c.expRate)
+    });
+
+    const logoChurnPanel = cdWorkPanel({
+        num: 8, title: 'Logo Churn', cls: lchurn !== null ? (lchurn <= 2 ? 'g' : lchurn <= 5 ? 'a' : 'r') : '',
+        desc: ['Customer-count churn — ignores MRR entirely.', 'Customers lost ÷ starting customers.'],
+        lines: [['Clients Churned', ch, true], ['Clients at Start', cs]],
+        formulaLbl: 'Logo Churn',
+        formulaSteps: lchurn !== null
+            ? ['= Clients Lost ÷ Starting Clients × 100', '= ' + ch + ' ÷ ' + cs + ' × 100']
+            : ['Enter Starting Clients & Clients Churned in Data Input'],
+        resultLbl: 'Logo Churn', resultVal: lchurn !== null ? lchurn.toFixed(1) + '%' : '—'
+    });
 
     document.getElementById('ret-row2').innerHTML = `
         <div class="kpi" title="Net Revenue Retention = (Starting + Expansion − Contraction − Churn) ÷ Starting. Excludes new business. >100% = expansion beats churn.">
             <div class="kpi-lbl">Net Retention Rate (NRR)</div>
             <div class="kpi-val ${c.nrr === null ? '' : c.nrr >= 1 ? 'g' : 'r'}">${pct(c.nrr)}</div>
-            <div class="kpi-work">(${cdFmt(c.startMRR)} + ${cdFmt(c.expMRR)} − ${cdFmt(c.conMRR)} − ${cdFmt(c.churnMRR)}) ÷ ${cdFmt(c.startMRR)}</div>
-            <div class="kpi-fml">(Starting + Expansion − Contraction − Churn) ÷ Starting MRR</div>
+            <div class="kpi-work">${nrrPanel}</div>
             ${pp(c, prev, 'nrr')}
         </div>
         <div class="kpi" title="Revenue Churn % = (Churned MRR + Contraction MRR) ÷ Starting MRR × 100">
             <div class="kpi-lbl">Revenue Churn (GRR)</div>
             <div class="kpi-val ${rchurn !== null ? (rchurn <= 2 ? 'g' : rchurn <= 5 ? 'a' : 'r') : ''}">${rchurn !== null ? rchurn.toFixed(1) + '%' : '—'}</div>
-            <div class="kpi-work">${rchurn !== null ? '(' + cdFmt(c.churnMRR) + ' + ' + cdFmt(c.conMRR) + ') ÷ ' + cdFmt(c.startMRR) : 'Enter Starting MRR & Churned MRR in Data Input'}</div>
-            <div class="kpi-fml">(Churned MRR + Contraction MRR) ÷ Starting MRR × 100</div>
+            <div class="kpi-work">${grrPanel}</div>
             ${rchurn !== null && prevRch !== null ? (() => { const d = rchurn - prevRch; return Math.abs(d) < 0.01 ? '' : `<div class="kpi-delta ${d < 0 ? 'up' : 'dn'}">${d < 0 ? '▼' : '▲'} ${Math.abs(d).toFixed(1)}pp</div>`; })() : ''}
         </div>
         <div class="kpi" title="Expansion Rate = Expansion MRR ÷ Starting MRR">
             <div class="kpi-lbl">Expansion Rate</div>
             <div class="kpi-val ${c.expRate !== null && c.expRate > 0 ? 'g' : ''}">${pct(c.expRate)}</div>
-            <div class="kpi-work">${cdFmt(c.expMRR)} ÷ ${cdFmt(c.startMRR)}</div>
-            <div class="kpi-fml">Expansion MRR ÷ Starting MRR</div>
+            <div class="kpi-work">${expRatePanel}</div>
             ${pp(c, prev, 'expRate')}
         </div>
         <div class="kpi" title="Logo Churn is purely a customer-count metric, so it ignores MRR entirely. Logo Churn % = Customers Lost ÷ Starting Customers × 100">
             <div class="kpi-lbl">Logo Churn</div>
             <div class="kpi-val ${lchurn !== null ? (lchurn <= 2 ? 'g' : lchurn <= 5 ? 'a' : 'r') : ''}">${lchurn !== null ? lchurn.toFixed(1) + '%' : '—'}</div>
-            <div class="kpi-work">${lchurn !== null ? ch + ' ÷ ' + cs : 'Enter Starting Clients & Clients Churned in Data Input'}</div>
-            <div class="kpi-fml">Customers Lost ÷ Starting Customers × 100</div>
+            <div class="kpi-work">${logoChurnPanel}</div>
             ${lchurn !== null && prevLchurn !== null ? (() => { const d = lchurn - prevLchurn; return Math.abs(d) < 0.01 ? '' : `<div class="kpi-delta ${d < 0 ? 'up' : 'dn'}">${d < 0 ? '▼' : '▲'} ${Math.abs(d).toFixed(1)}pp</div>`; })() : ''}
         </div>`;
 
